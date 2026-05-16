@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Shield, Zap, MapPin, Smartphone, Users, Mail, ChevronDown, Activity } from 'lucide-react'
 import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 // Import de l'image depuis pages/images/
 import backgroundImage from './images/test4.png'
 
@@ -244,7 +245,7 @@ export default function Home() {
             letterSpacing: '0.1em',
           }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#a855f7', display: 'inline-block' }} />
-            FSR ROBOTIC CLUB — 2024
+            FSR ROBOTIC CLUB — 2026
           </div>
 
           {/* Title */}
@@ -542,10 +543,7 @@ export default function Home() {
 
         {/* ── FOOTER ── */}
         <GlowLine />
-        <footer style={{ textAlign: 'center', padding: '2rem', color: '#c0c0d8', fontFamily: 'Rajdhani,sans-serif', fontSize: '0.9rem' }}>
-          <span style={{ color: '#a855f7', fontFamily: 'Orbitron,sans-serif', fontSize: '0.8rem' }}>SALUS</span>
-          {' '}— FSR Robotic Club © 2024. Tous droits réservés.
-        </footer>
+        <Footer />
 
         <style>{`
           @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
