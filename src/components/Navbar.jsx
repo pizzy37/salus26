@@ -1,17 +1,30 @@
 import { useState } from 'react'
 import { Shield, Menu, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { getToken, removeToken } from '../api'
 
 const LINKS = [
-  { label: 'Accueil',      href: '#' },
-  { label: 'Fonctionnalités', href: '#' },
-  { label: 'Équipe',       href: '#' },
-  { label: 'Contact',      href: '#' },
+  { label: 'Accueil', path: '/' },
+  { label: 'Fonctionnalites', path: '/#features' },
+  { label: 'Equipe', path: '/#team' },
+  { label: 'Contact', path: '/#contact' },
 ]
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
+  const token = getToken()
+  const isAuthenticated = Boolean(token)
+  let userRole = null
+  try {
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      userRole = payload?.role || null
+    }
+  } catch (_) {
+    userRole = null
+  }
+  const isAdmin = userRole === 'admin'
 
   return (
     <>
@@ -28,8 +41,6 @@ export default function Navbar() {
         alignItems: 'center',
         justifyContent: 'space-between',
       }}>
-
-        {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{
             width: '36px', height: '36px', borderRadius: '8px',
@@ -51,72 +62,72 @@ export default function Navbar() {
           </span>
         </div>
 
-        {/* Desktop links */}
         <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }} className="desktop-nav">
-          {LINKS.map(({ label, href }) => (
-            <a key={label} href={href} style={{
-              color: '#8888aa',
-              textDecoration: 'none',
-              fontFamily: 'Rajdhani,sans-serif',
-              fontSize: '0.95rem',
-              fontWeight: 500,
-              letterSpacing: '0.05em',
-              transition: 'color 0.2s',
-            }}
-            onMouseEnter={e => e.currentTarget.style.color = '#a855f7'}
-            onMouseLeave={e => e.currentTarget.style.color = '#8888aa'}
+          {LINKS.map(({ label, path }) => (
+            <a
+              key={label}
+              href={path}
+              style={{
+                color: '#8888aa',
+                textDecoration: 'none',
+                fontFamily: 'Rajdhani,sans-serif',
+                fontSize: '0.95rem',
+                fontWeight: 500,
+                letterSpacing: '0.05em',
+                transition: 'color 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.color = '#a855f7'}
+              onMouseLeave={e => e.currentTarget.style.color = '#8888aa'}
+              onClick={e => {
+                e.preventDefault()
+                navigate(path)
+              }}
             >
               {label}
             </a>
           ))}
         </div>
 
-        {/* Login button */}
-        
-<div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-  <button 
-    onClick={() => navigate('/login')}
-    style={{
-    background: 'transparent',
-    border: '1px solid rgba(168,85,247,0.4)',
-    borderRadius: '8px',
-    padding: '0.5rem 1.2rem',
-    color: '#a855f7',
-    fontFamily: 'Orbitron,sans-serif',
-    fontSize: '0.7rem',
-    letterSpacing: '0.08em',
-    cursor: 'pointer',
-  }}>
-    CONNEXION
-  </button>
-  <button 
-    onClick={() => navigate('/signup')}
-    style={{
-    background: 'linear-gradient(135deg, #a855f7, #7c3aed)',
-    border: 'none',
-    borderRadius: '8px',
-    padding: '0.5rem 1.2rem',
-    color: '#fff',
-    fontFamily: 'Orbitron,sans-serif',
-    fontSize: '0.7rem',
-    letterSpacing: '0.08em',
-    cursor: 'pointer',
-    boxShadow: '0 0 14px rgba(168,85,247,0.35)',
-  }}>
-    INSCRIPTION
-  </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          {!isAuthenticated ? (
+            <>
+              <button onClick={() => navigate('/login')} style={{ background: 'transparent', border: '1px solid rgba(168,85,247,0.4)', borderRadius: '8px', padding: '0.5rem 1.2rem', color: '#a855f7', fontFamily: 'Orbitron,sans-serif', fontSize: '0.7rem', letterSpacing: '0.08em', cursor: 'pointer' }}>
+                CONNEXION
+              </button>
+              <button onClick={() => navigate('/signup')} style={{ background: 'linear-gradient(135deg, #a855f7, #7c3aed)', border: 'none', borderRadius: '8px', padding: '0.5rem 1.2rem', color: '#fff', fontFamily: 'Orbitron,sans-serif', fontSize: '0.7rem', letterSpacing: '0.08em', cursor: 'pointer', boxShadow: '0 0 14px rgba(168,85,247,0.35)' }}>
+                INSCRIPTION
+              </button>
+            </>
+          ) : (
+            <>
+              {!isAdmin && (
+                <>
+                  <button onClick={() => navigate('/profile')} style={{ background: 'transparent', border: '1px solid rgba(168,85,247,0.4)', borderRadius: '8px', padding: '0.5rem 1rem', color: '#a855f7', fontFamily: 'Orbitron,sans-serif', fontSize: '0.7rem', letterSpacing: '0.08em', cursor: 'pointer' }}>
+                    PROFIL
+                  </button>
+                  <button onClick={() => navigate('/settings')} style={{ background: 'transparent', border: '1px solid rgba(6,182,212,0.4)', borderRadius: '8px', padding: '0.5rem 1rem', color: '#06b6d4', fontFamily: 'Orbitron,sans-serif', fontSize: '0.7rem', letterSpacing: '0.08em', cursor: 'pointer' }}>
+                    PARAMETRES
+                  </button>
+                </>
+              )}
+              <button
+                onClick={() => {
+                  removeToken()
+                  navigate('/login')
+                }}
+                style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)', border: 'none', borderRadius: '8px', padding: '0.5rem 1rem', color: '#fff', fontFamily: 'Orbitron,sans-serif', fontSize: '0.7rem', letterSpacing: '0.08em', cursor: 'pointer' }}
+              >
+                DECONNEXION
+              </button>
+            </>
+          )}
 
-  {/* Burger mobile */}
-  <button
-    onClick={() => setOpen(!open)}
-    style={{ background: 'none', border: 'none', color: '#a855f7', cursor: 'pointer', display: 'none' }}
-    className="burger"
-  >
-    {open ? <X size={24} /> : <Menu size={24} />}
-  </button>
-</div>
-</nav>
-{/* Responsive styles */}
+          <button onClick={() => setOpen(!open)} style={{ background: 'none', border: 'none', color: '#a855f7', cursor: 'pointer', display: 'none' }} className="burger">
+            {open ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </nav>
+
       <style>{`
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
@@ -126,4 +137,3 @@ export default function Navbar() {
     </>
   )
 }
-

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { adminAPI } from '../api'
 import { Shield, Users, AlertTriangle, Activity, Eye, Trash2, CheckCircle, Clock, XCircle, MapPin, Search, Filter } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import backgroundImage from './images/test4.png'
@@ -235,37 +236,100 @@ function UserModal({ user, onClose }) {
 // ── MAIN PAGE ─────────────────────────────────────────────────
 export default function Admin() {
   const [tab, setTab]               = useState('dashboard')
-  const [users, setUsers]           = useState(MOCK_USERS)
-  const [alerts]                    = useState(MOCK_ALERTS)
+  const [users, setUsers] = useState([])
+const [alerts, setAlerts] = useState([])
+const [stats, setStats] = useState({
+  totalUsers: 0,
+  totalAlerts: 0,
+  alertsSent: 0,
+  alertsCancelled: 0,
+  alertsPending: 0
+})
+
+const [loading, setLoading] = useState(true)
+useEffect(() => {
+  const fetchAll = async () => {
+    try {
+      const [u, a, s] = await Promise.all([
+        adminAPI.getUsers(),
+        adminAPI.getAlerts(),
+        adminAPI.getStats(),
+      ])
+
+      const usersData = Array.isArray(u?.data) ? u.data : (Array.isArray(u?.data?.users) ? u.data.users : [])
+      const alertsData = Array.isArray(a?.data) ? a.data : (Array.isArray(a?.data?.alerts) ? a.data.alerts : [])
+      const statsDataRaw = s?.data?.stats ?? s?.data ?? {}
+      const statsData = {
+        totalUsers: statsDataRaw.totalUsers ?? 0,
+        totalAlerts: statsDataRaw.totalAlerts ?? 0,
+        alertsSent: statsDataRaw.alertsSent ?? 0,
+        alertsCancelled: statsDataRaw.alertsCancelled ?? statsDataRaw.cancelledAlerts ?? 0,
+        alertsPending: statsDataRaw.alertsPending ?? statsDataRaw.pendingAlerts ?? 0,
+      }
+      const driversOnly = usersData.filter((u) => u?.role !== 'admin')
+      const adminCount = usersData.length - driversOnly.length
+      statsData.totalUsers = Math.max(0, (statsData.totalUsers || 0) - adminCount)
+
+      setUsers(driversOnly)
+      setAlerts(alertsData)
+      setStats(statsData)
+
+    } catch (err) {
+      console.error('Erreur chargement admin:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchAll()
+}, [])
   const [selectedUser, setSelectedUser] = useState(null)
   const [searchUser, setSearchUser] = useState('')
   const [searchAlert, setSearchAlert] = useState('')
   const [filterStatut, setFilterStatut] = useState('all')
   const [confirmDelete, setConfirmDelete] = useState(null)
 
-  const filteredUsers = users.filter(u =>
+  const filteredUsers = (Array.isArray(users) ? users : []).filter(u =>
     `${u.nom} ${u.prenom} ${u.email}`.toLowerCase().includes(searchUser.toLowerCase())
   )
 
-  const filteredAlerts = alerts.filter(a => {
-    const matchSearch = a.conducteur.toLowerCase().includes(searchAlert.toLowerCase()) ||
-                        a.immatriculation.toLowerCase().includes(searchAlert.toLowerCase())
+  const filteredAlerts = (Array.isArray(alerts) ? alerts : []).filter(a => {
+    const conducteurLabel = a.conducteur || `${a?.user?.prenom || ''} ${a?.user?.nom || ''}`.trim()
+    const immatriculationLabel = a.immatriculation || a?.user?.vehicle?.immatriculation || ''
+    const matchSearch = conducteurLabel.toLowerCase().includes(searchAlert.toLowerCase()) ||
+                        immatriculationLabel.toLowerCase().includes(searchAlert.toLowerCase())
     const matchFilter = filterStatut === 'all' || a.statut === filterStatut
     return matchSearch && matchFilter
   })
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
+  try {
+    await adminAPI.deleteUser(id)
+
     setUsers(prev => prev.filter(u => u.id !== id))
     setConfirmDelete(null)
-  }
 
-  const stats = {
-    totalUsers:     users.length,
-    totalAlerts:    alerts.length,
-    alertsSent:     alerts.filter(a => a.statut === 'sent').length,
-    alertsCancelled: alerts.filter(a => a.statut === 'cancelled').length,
-    alertsPending:  alerts.filter(a => a.statut === 'pending').length,
+  } catch (err) {
+    console.error('Erreur suppression:', err)
   }
+}
+
+ if (loading) {
+  return (
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#050510',
+      color: '#a855f7',
+      fontFamily: 'Orbitron, sans-serif',
+      fontSize: '1rem',
+    }}>
+      Chargement admin...
+    </div>
+  )
+} 
 
   const TABS = [
     { id: 'dashboard', label: 'Dashboard'   },
@@ -354,7 +418,7 @@ export default function Admin() {
                   — ALERTES RÉCENTES
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  {alerts.slice(0, 3).map(alert => (
+              {(Array.isArray(alerts) ? alerts : []).slice(0, 3).map(alert => (
                     <div key={alert.id} style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                       padding: '0.9rem 1rem',
@@ -367,7 +431,7 @@ export default function Admin() {
                         <AlertTriangle size={16} color="#ef4444" />
                         <div>
                           <div style={{ color: '#f0f0ff', fontFamily: 'Rajdhani,sans-serif', fontSize: '0.95rem', fontWeight: 600 }}>
-                            {alert.conducteur}
+                            {alert.conducteur || `${alert?.user?.prenom || ''} ${alert?.user?.nom || ''}`.trim()}
                           </div>
                           <div style={{ color: '#8888aa', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                             <MapPin size={11} />
@@ -392,7 +456,7 @@ export default function Admin() {
                   — DERNIERS CONDUCTEURS INSCRITS
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  {users.slice(0, 3).map(user => (
+                  {(Array.isArray(users) ? users : []).slice(0, 3).map(user => (
                     <div key={user.id} style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                       padding: '0.9rem 1rem',
@@ -459,8 +523,11 @@ export default function Admin() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {filteredUsers.map(user => (
-                  <div key={user.id} style={{
+              {filteredUsers.map(user => {
+                const userVehicle = user.vehicle || {}
+                const userMedical = user.medicalData || user.medical || {}
+                return (
+                <div key={user.id} style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     padding: '1rem 1.2rem',
                     background: 'rgba(168,85,247,0.04)',
@@ -485,7 +552,7 @@ export default function Admin() {
                         </div>
                         <div style={{ color: '#8888aa', fontSize: '0.82rem' }}>{user.email}</div>
                         <div style={{ color: '#666688', fontSize: '0.75rem' }}>
-                          {user.vehicle.immatriculation} — {user.vehicle.couleur} — {user.medical.groupe_sanguin}
+                          {(userVehicle.immatriculation || '—')} — {(userVehicle.couleur || '—')} — {(userMedical.groupe_sanguin || '—')}
                         </div>
                       </div>
                     </div>
@@ -520,8 +587,8 @@ export default function Admin() {
                         <Trash2 size={13} /> SUPPRIMER
                       </button>
                     </div>
-                  </div>
-                ))}
+                </div>
+              )})}
               </div>
             </Card>
           )}
@@ -580,7 +647,10 @@ export default function Admin() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {filteredAlerts.map(alert => (
+                {filteredAlerts.map(alert => {
+                  const conducteurLabel = alert.conducteur || `${alert?.user?.prenom || ''} ${alert?.user?.nom || ''}`.trim()
+                  const immatriculationLabel = alert.immatriculation || alert?.user?.vehicle?.immatriculation || '—'
+                  return (
                   <div key={alert.id} style={{
                     padding: '1rem 1.2rem',
                     background: 'rgba(239,68,68,0.04)',
@@ -591,10 +661,10 @@ export default function Admin() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <AlertTriangle size={16} color="#ef4444" />
                         <span style={{ color: '#f0f0ff', fontFamily: 'Rajdhani,sans-serif', fontSize: '1rem', fontWeight: 600 }}>
-                          {alert.conducteur}
+                          {conducteurLabel}
                         </span>
                         <span style={{ color: '#8888aa', fontSize: '0.82rem' }}>
-                          {alert.immatriculation}
+                          {immatriculationLabel}
                         </span>
                       </div>
                       <StatusBadge statut={alert.statut} />
@@ -615,7 +685,7 @@ export default function Admin() {
                       )}
                     </div>
                   </div>
-                ))}
+                )})}
               </div>
             </Card>
           )}

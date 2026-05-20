@@ -6,19 +6,67 @@ import Footer from '../components/Footer'
 import backgroundImage from './images/test4.png'
 
 // ── DATA ────────────────────────────────────────────────────────────────
+// ── DATA ────────────────────────────────────────────────────────────────
 const TEAM = [
-  { name: 'Oumaima HONNIT',           role: 'Team Leader',   initials: 'OH', color: '#a855f7' },
-  { name: 'Oumaima KASSIMI ALAOUI',   role: 'Développeuse',  initials: 'OK', color: '#06b6d4' },
-  { name: 'Youssra BENCHRIFA',        role: 'Développeuse',  initials: 'YB', color: '#ec4899' },
-  { name: 'Fatima Zahra EL MARZOUKI', role: 'Développeuse',  initials: 'FZ', color: '#f59e0b' },
-  { name: 'Hani EZ-ZHAR',             role: 'Développeur',   initials: 'HE', color: '#10b981' },
-  { name: 'Mohammed Adam ELKHADRI',   role: 'Développeur',   initials: 'MA', color: '#ef4444' },
-  { name: 'Ismail AIT BAALI',         role: 'Développeur',   initials: 'IA', color: '#06b6d4' },
-  { name: 'Membre 8',                 role: 'Développeur',   initials: 'M8', color: '#a855f7' },
-  { name: 'Membre 9',                 role: 'Développeur',   initials: 'M9', color: '#f59e0b' },
-  { name: 'Membre 10',                role: 'Développeur',   initials: 'M0', color: '#10b981' },
+  { 
+    name: 'HONNIT Oumaima',
+    role: 'Fondatrice & CEO',
+    initials: 'OH',
+    color: '#a855f7'
+  },
+
+  { 
+    name: 'ALAOUI KASSIMI Oumaima',
+    role: 'Co-lead & Responsable Marketing',
+    initials: 'AO',
+    color: '#06b6d4'
+  },
+
+  { 
+    name: 'EL KABRANE Ilyas',
+    role: 'Responsable conception du dispositif',
+    initials: 'EI',
+    color: '#ec4899'
+  },
+
+  { 
+    name: 'ELKHADRI Mohamed Adam',
+    role: 'Responsable hardware & intégration du dispositif',
+    initials: 'ME',
+    color: '#ef4444'
+  },
+
+  { 
+    name: 'ZARGHOUNE Islam',
+    role: 'Responsable base de données',
+    initials: 'ZI',
+    color: '#10b981'
+  },
+
+  { 
+    name: 'DEKKANI Houda',
+    role: 'Responsable design & réseaux sociaux',
+    initials: 'DH',
+    color: '#f59e0b'
+  },
+
+  { 
+    name: 'AIT BAALI Ismail',
+    role: 'Développeur application web & mobile',
+    initials: 'AI',
+    color: '#06b6d4'
+  },
+
+  { 
+    name: 'ZAHI Chahd Najlae',
+    role: 'Responsable développement business',
+    initials: 'ZC',
+    color: '#8b5cf6'
+  },
 ]
 
+
+//_________________________________________________________________________________________________
 const FEATURES = [
   { icon: Zap,        title: 'Détection Automatique', desc: "Détection d'accident via gyroscope intégré en temps réel." },
   { icon: MapPin,     title: 'Localisation GPS',      desc: 'Transmission instantanée des coordonnées GPS aux secours.' },
@@ -230,7 +278,7 @@ export default function Home() {
             pointerEvents: 'none',
           }} />
 
-          {/* Badge */}
+          {/* Badge 
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             background: 'rgba(168,85,247,0.15)',
@@ -245,8 +293,8 @@ export default function Home() {
             letterSpacing: '0.1em',
           }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#a855f7', display: 'inline-block' }} />
-            FSR ROBOTIC CLUB — 2026
-          </div>
+            EVERY SECOND COUNTS
+          </div> */}
 
           {/* Title */}
           <h1 style={{
@@ -270,7 +318,7 @@ export default function Home() {
             letterSpacing: '0.4em',
             marginBottom: '2rem',
           }}>
-            SYSTÈME D'ALERTE D'URGENCE INTELLIGENT{dots}
+            EVERY SECOND COUNTS{dots}
           </div>
 
           <p style={{
@@ -341,7 +389,7 @@ export default function Home() {
               <div style={{ color: '#a855f7', fontFamily: 'Orbitron,sans-serif', fontSize: '0.75rem', letterSpacing: '0.2em', marginBottom: '1rem' }}>
                 — À PROPOS DU PROJET
               </div>
-              <h2 style={{ fontFamily: 'Orbitron,sans-serif', fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', marginBottom: '1.5rem', lineHeight: 1.2 }}>
+              <h2 style={{ fontFamily: 'Orbitron,sans-serif', fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', marginBottom: '1.5rem', lineHeight: 1.2, color: '#c0c0d8' }}>
                 Sauver des vies grâce à la <span style={{ color: '#a855f7' }}>technologie</span>
               </h2>
               <p style={{ color: '#c0c0d8', lineHeight: 1.8, marginBottom: '1rem', fontSize: '1rem' }}>
@@ -398,7 +446,7 @@ export default function Home() {
             <div style={{ color: '#06b6d4', fontFamily: 'Orbitron,sans-serif', fontSize: '0.75rem', letterSpacing: '0.2em', marginBottom: '1rem' }}>
               — FONCTIONNALITÉS
             </div>
-            <h2 style={{ fontFamily: 'Orbitron,sans-serif', fontSize: 'clamp(1.5rem, 4vw, 2.2rem)' }}>
+            <h2 style={{ fontFamily: 'Orbitron,sans-serif', fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', color: '#c0c0d8' }}>
               Tout ce dont vous avez besoin
             </h2>
           </div>
@@ -415,9 +463,17 @@ export default function Home() {
             <div style={{ color: '#a855f7', fontFamily: 'Orbitron,sans-serif', fontSize: '0.75rem', letterSpacing: '0.2em', marginBottom: '1rem' }}>
               — NOTRE ÉQUIPE
             </div>
-            <h2 style={{ fontFamily: 'Orbitron,sans-serif', fontSize: 'clamp(1.5rem, 4vw, 2.2rem)' }}>
-              Les cerveaux derrière <span style={{ color: '#a855f7' }}>SALUS</span>
-            </h2>
+            <h2
+  style={{
+    fontFamily: 'Orbitron, sans-serif',
+    fontSize: 'clamp(1.5rem, 4vw, 2.2rem)'
+  }}
+>
+  <span style={{ color: '#c0c0d8' }}>
+    Les cerveaux derrière
+  </span>{' '}
+  <span style={{ color: '#a855f7' }}>SALUS</span>
+</h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
             {TEAM.map(m => <TeamCard key={m.name} member={m} />)}
@@ -432,7 +488,7 @@ export default function Home() {
             <div style={{ color: '#06b6d4', fontFamily: 'Orbitron,sans-serif', fontSize: '0.75rem', letterSpacing: '0.2em', marginBottom: '1rem' }}>
               — CONTACT
             </div>
-            <h2 style={{ fontFamily: 'Orbitron,sans-serif', fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', marginBottom: '1rem' }}>
+            <h2 style={{ fontFamily: 'Orbitron,sans-serif', fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', marginBottom: '1rem', color: '#c0c0d8' }}>
               Nous contacter
             </h2>
             <p style={{ color: '#c0c0d8', maxWidth: '500px', margin: '0 auto' }}>
@@ -518,10 +574,10 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Social */}
+            {/* Social 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginTop: '1.5rem' }}>
               {[
-                { label: 'GitHub',  href: 'https://github.com' },
+                { label: 'Git',  href: 'https://github.com' },
                 { label: 'Email',   href: 'mailto:salus@fsr.ac.ma' },
               ].map(({ label, href }) => (
                 <a key={label} href={href} style={{
@@ -537,8 +593,8 @@ export default function Home() {
                   {label}
                 </a>
               ))}
-            </div>
-          </div>
+            </div> */}
+          </div> 
         </section>
 
         {/* ── FOOTER ── */}

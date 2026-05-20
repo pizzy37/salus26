@@ -136,12 +136,12 @@ export default function Footer() {
           }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#a855f7' }} />
             <span style={{ color: '#a855f7', fontFamily: 'Orbitron,sans-serif', fontSize: '0.6rem', letterSpacing: '0.1em' }}>
-              FSR ROBOTIC CLUB
+              SALUS 26
             </span>
           </div>
-        </div>
+        </div> 
 
-      </div>
+      </div> 
 
       {/* Bottom bar */}
       <div style={{
@@ -156,7 +156,7 @@ export default function Footer() {
         gap: '0.75rem',
       }}>
         <span style={{ color: '#666688', fontSize: '0.82rem' }}>
-          © 2026 <span style={{ color: '#a855f7', fontFamily: 'Orbitron,sans-serif', fontSize: '0.75rem' }}>SALUS</span> — FSR Robotic Club. Tous droits réservés.
+          © 2026 <span style={{ color: '#a855f7', fontFamily: 'Orbitron,sans-serif', fontSize: '0.75rem' }}>SALUS</span> —  Tous droits réservés.
         </span>
         <div style={{ display: 'flex', gap: '1.5rem' }}>
           {['Confidentialité', 'Conditions'].map(label => (
